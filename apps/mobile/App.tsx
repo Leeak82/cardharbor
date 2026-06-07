@@ -933,32 +933,6 @@ function TransactionDetail({ item, admin, onBack, onHome }: { item: Transaction;
         </View>
       ) : null}
 
-      {admin ? (
-        <View style={styles.noticeBox}>
-          <Text style={styles.sectionTitle}>Admin Actions</Text>
-
-          <TouchableOpacity style={styles.primaryButton} onPress={() => updateStatus("Approved")}>
-            <Text style={styles.primaryButtonText}>Approve</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.secondaryButton} onPress={() => updateStatus("Needs More Info")}>
-            <Text style={styles.secondaryButtonText}>Needs More Info</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.secondaryButton} onPress={() => updateStatus("Ready For Payout")}>
-            <Text style={styles.secondaryButtonText}>Ready For Payout</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.primaryButton} onPress={() => updateStatus("Paid")}>
-            <Text style={styles.primaryButtonText}>Mark Paid</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.dangerButton} onPress={() => updateStatus("Rejected")}>
-            <Text style={styles.dangerButtonText}>Reject</Text>
-          </TouchableOpacity>
-        </View>
-      ) : null}
-
       {item.admin_note ? <View style={styles.detailRow}><Text style={styles.detailKey}>Admin Note</Text><Text>{item.admin_note}</Text></View> : null}
       {item.payout_amount ? <View style={styles.detailRow}><Text style={styles.detailKey}>Payout Amount</Text><Text>${item.payout_amount}</Text></View> : null}
       {item.payout_method_used ? <View style={styles.detailRow}><Text style={styles.detailKey}>Method Used</Text><Text>{item.payout_method_used}</Text></View> : null}
