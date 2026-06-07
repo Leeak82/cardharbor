@@ -1352,6 +1352,27 @@ function TransactionDetail({ item, admin, onBack, onHome }: { item: Transaction;
       <View style={styles.detailRow}><Text style={styles.detailKey}>Payout</Text><Text>{item.payout_method}</Text></View>
       <View style={styles.detailRow}><Text style={styles.detailKey}>Status</Text><Text>{item.status}</Text></View>
 
+      {!admin ? (
+        <View style={styles.noticeBox}>
+          <Text style={styles.sectionTitle}>Payout Progress</Text>
+          <Text style={styles.body}>
+            {item.status === "Submitted" || item.status === "Pending Review"
+              ? "Your card is waiting for review."
+              : item.status === "Approved"
+              ? "Your card was approved and is being prepared for payout."
+              : item.status === "Ready For Payout"
+              ? "Your payout is ready to be sent."
+              : item.status === "Paid"
+              ? "Your payout has been completed."
+              : item.status === "Rejected"
+              ? "This card was rejected."
+              : item.status === "Needs More Info"
+              ? "More information is needed before review can continue."
+              : "Status update available."}
+          </Text>
+        </View>
+      ) : null}
+
       <StatusTimeline status={item.status} />
 
       {item.risk_score !== undefined ? (
