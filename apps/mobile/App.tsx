@@ -208,6 +208,7 @@ export default function App() {
         await loadAdminStats();
         setScreen("adminHome");
       } else {
+        await loadEarnings();
         setScreen("home");
       }
     } catch (err: any) {
