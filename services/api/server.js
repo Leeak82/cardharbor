@@ -19,6 +19,17 @@ const DB_FILE = "./db.json";
 const UPLOAD_DIR = "./uploads";
 
 app.use(cors());
+
+app.get("/api/test-email", async (req, res) => {
+  try {
+    const result = await notify("test_email", {
+      message: "CardHarbor email test from Render"
+    });
+    res.json({ ok: true, result });
+  } catch (err) {
+    res.status(500).json({ ok: false, error: err.message });
+  }
+});
 app.get("/api/health", (req, res) => {
   res.json({
     ok: true,
