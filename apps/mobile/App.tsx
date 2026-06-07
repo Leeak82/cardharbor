@@ -13,7 +13,7 @@ import {
 import * as ImagePicker from "expo-image-picker";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const API_URL = "http://172.20.10.2:8080";
+const API_URL = "https://cardharbor.onrender.com";
 
 type Brand = { name: string; rate: number };
 type User = { id: number; email: string; role?: string };
@@ -747,6 +747,33 @@ function TransactionList({
 }
 
 function TransactionDetail({ item, admin, onBack, onHome }: { item: Transaction; admin: boolean; onBack: () => void; onHome: () => void }) {
+  async function updateStatus(status: string) {
+    try {
+      const activeToken = await AsyncStorage.getItem("cardharbor_token");
+      const res = await fetch(`${API_URL}/api/admin/transactions/${item.id}/status`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${activeToken}`,
+        },
+        body: JSON.stringify({
+          status,
+          admin_note: "",
+          payout_note: status === "Paid" ? "Manual payout marked complete." : "",
+          payout_reference: "",
+        }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Status update failed");
+
+      Alert.alert("Updated", `Transaction marked: ${status}`);
+      onBack();
+    } catch (err: any) {
+      Alert.alert("Admin Action Failed", err.message);
+    }
+  }
+
   return (
     <View style={styles.card}>
       <Text style={styles.title}>{admin ? "Admin Review Detail" : "Transaction Detail"}</Text>
@@ -766,22 +793,36 @@ function TransactionDetail({ item, admin, onBack, onHome }: { item: Transaction;
       <View style={styles.detailRow}><Text style={styles.detailKey}>Offer</Text><Text>${item.offer}</Text></View>
       <View style={styles.detailRow}><Text style={styles.detailKey}>Payout</Text><Text>{item.payout_method}</Text></View>
       <View style={styles.detailRow}><Text style={styles.detailKey}>Status</Text><Text>{item.status}</Text></View>
-      {item.payout_reference ? <View style={styles.detailRow}><Text style={styles.detailKey}>Payout Ref</Text><Text>{item.payout_reference}</Text></View> : null}
-      {item.payout_note ? <View style={styles.detailRow}><Text style={styles.detailKey}>Payout Note</Text><Text>{item.payout_note}</Text></View> : null}
-      {item.paid_at ? <View style={styles.detailRow}><Text style={styles.detailKey}>Paid At</Text><Text>{item.paid_at}</Text></View> : null}
 
-      {item.payout_profile ? (
+      {admin ? (
         <View style={styles.noticeBox}>
-          <Text style={styles.sectionTitle}>Saved Payout Profile</Text>
-          <Text>Method: {item.payout_profile.preferred_method || "None"}</Text>
-          <Text>Cash App: {item.payout_profile.cashapp_tag || "None"}</Text>
-          <Text>Venmo: {item.payout_profile.venmo_handle || "None"}</Text>
-          <Text>Bank: {item.payout_profile.bank_name || "None"}</Text>
-          <Text>Acct Last 4: {item.payout_profile.account_last4 || "None"}</Text>
+          <Text style={styles.sectionTitle}>Admin Actions</Text>
+
+          <TouchableOpacity style={styles.primaryButton} onPress={() => updateStatus("Approved")}>
+            <Text style={styles.primaryButtonText}>Approve</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.secondaryButton} onPress={() => updateStatus("Needs More Info")}>
+            <Text style={styles.secondaryButtonText}>Needs More Info</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.secondaryButton} onPress={() => updateStatus("Ready For Payout")}>
+            <Text style={styles.secondaryButtonText}>Ready For Payout</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.primaryButton} onPress={() => updateStatus("Paid")}>
+            <Text style={styles.primaryButtonText}>Mark Paid</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.dangerButton} onPress={() => updateStatus("Rejected")}>
+            <Text style={styles.dangerButtonText}>Reject</Text>
+          </TouchableOpacity>
         </View>
       ) : null}
 
-      {item.admin_note ? <View style={styles.detailRow}><Text style={styles.detailKey}>Note</Text><Text>{item.admin_note}</Text></View> : null}
+      {item.payout_reference ? <View style={styles.detailRow}><Text style={styles.detailKey}>Payout Ref</Text><Text>{item.payout_reference}</Text></View> : null}
+      {item.payout_note ? <View style={styles.detailRow}><Text style={styles.detailKey}>Payout Note</Text><Text>{item.payout_note}</Text></View> : null}
+      {item.paid_at ? <View style={styles.detailRow}><Text style={styles.detailKey}>Paid At</Text><Text>{item.paid_at}</Text></View> : null}
 
       <Text style={styles.sectionTitle}>Possible Codes</Text>
       {item.possible_codes && item.possible_codes.length > 0 ? (
