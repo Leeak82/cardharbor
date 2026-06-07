@@ -113,6 +113,7 @@ export default function App() {
   const [ledger, setLedger] = useState<any>(null);
   const [fraud, setFraud] = useState<any>(null);
   const [csvPreview, setCsvPreview] = useState("");
+  const [earnings, setEarnings] = useState<any>(null);
 
   useEffect(() => {
     boot();
@@ -361,6 +362,15 @@ export default function App() {
     }
   }
 
+  async function loadEarnings() {
+    try {
+      const data = await request("/api/earnings");
+      setEarnings(data);
+    } catch (err: any) {
+      Alert.alert("Earnings", err.message);
+    }
+  }
+
   async function loadCsvPreview(path: string) {
     try {
       const activeToken = await AsyncStorage.getItem("cardharbor_token");
@@ -501,6 +511,10 @@ export default function App() {
 
             <TouchableOpacity style={styles.primaryButton} onPress={async () => { await loadHistory(); setScreen("history"); }}>
               <Text style={styles.primaryButtonText}>Transaction History</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.primaryButton} onPress={async () => { await loadEarnings(); setScreen("earnings"); }}>
+              <Text style={styles.primaryButtonText}>Earnings Dashboard</Text>
             </TouchableOpacity>
 
             <TouchableOpacity style={styles.secondaryButton} onPress={async () => { await loadPayoutProfile(); setScreen("payoutProfile"); }}>
@@ -1094,6 +1108,29 @@ export default function App() {
             <Text selectable style={styles.ocrBox}>{csvPreview || "No CSV loaded."}</Text>
 
             <TouchableOpacity style={styles.secondaryButton} onPress={() => setScreen("adminHome")}>
+              <Text style={styles.secondaryButtonText}>Back</Text>
+            </TouchableOpacity>
+          </View>
+        )}
+
+        {screen === "earnings" && earnings && (
+          <View style={styles.card}>
+            <Text style={styles.title}>Earnings Dashboard</Text>
+
+            <View style={styles.noticeBox}>
+              <Text style={styles.sectionTitle}>Your CardHarbor Stats</Text>
+              <Text style={styles.body}>Total Earned: {money(earnings.totalEarned)}</Text>
+              <Text style={styles.body}>Pending Offers: {money(earnings.pendingAmount)}</Text>
+              <Text style={styles.body}>Total Transactions: {earnings.totalTransactions}</Text>
+              <Text style={styles.body}>Paid Transactions: {earnings.paidTransactions}</Text>
+              <Text style={styles.body}>Average Payout Time: {earnings.avgPayoutHours} hours</Text>
+            </View>
+
+            <TouchableOpacity style={styles.primaryButton} onPress={loadEarnings}>
+              <Text style={styles.primaryButtonText}>Refresh Earnings</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.secondaryButton} onPress={() => setScreen("home")}>
               <Text style={styles.secondaryButtonText}>Back</Text>
             </TouchableOpacity>
           </View>
