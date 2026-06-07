@@ -790,6 +790,23 @@ export default function App() {
           <View style={styles.card}>
             <Text style={styles.title}>Analytics Dashboard</Text>
 
+            {analytics.risk?.highRisk > 0 ? (
+              <View style={styles.noticeBox}>
+                <Text style={styles.sectionTitle}>Alert</Text>
+                <Text style={styles.body}>High-risk transactions need review before payout.</Text>
+              </View>
+            ) : analytics.statuses?.readyForPayout > 0 ? (
+              <View style={styles.noticeBox}>
+                <Text style={styles.sectionTitle}>Alert</Text>
+                <Text style={styles.body}>Transactions are ready for payout.</Text>
+              </View>
+            ) : analytics.statuses?.pendingReview > 0 ? (
+              <View style={styles.noticeBox}>
+                <Text style={styles.sectionTitle}>Alert</Text>
+                <Text style={styles.body}>Pending transactions need review.</Text>
+              </View>
+            ) : null}
+
             <View style={styles.noticeBox}>
               <Text style={styles.sectionTitle}>Snapshot</Text>
               <Text style={styles.body}>Transactions: {analytics.totalTransactions}</Text>
