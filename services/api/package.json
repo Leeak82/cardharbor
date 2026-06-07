@@ -11,6 +11,7 @@
     "cors": "latest",
     "dotenv": "latest",
     "express": "latest",
-    "jsonwebtoken": "latest"
+    "jsonwebtoken": "latest",
+    "nodemailer": "^8.0.10"
   }
 }
