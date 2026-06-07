@@ -833,6 +833,13 @@ export default function App() {
               </View>
             )) : null}
 
+            <View style={styles.noticeBox}>
+              <Text style={styles.sectionTitle}>Export Summary</Text>
+              <Text style={styles.body}>
+                CardHarbor Summary: {analytics.totalTransactions} transactions, {money(analytics.money?.totalOffers)} in offers, {money(analytics.money?.totalPaid)} paid, {analytics.rates?.approvalRate}% approval rate, {analytics.risk?.highRisk} high-risk transactions.
+              </Text>
+            </View>
+
             <TouchableOpacity style={styles.primaryButton} onPress={loadAnalytics}>
               <Text style={styles.primaryButtonText}>Refresh Analytics</Text>
             </TouchableOpacity>
