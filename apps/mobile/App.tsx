@@ -866,8 +866,18 @@ export default function App() {
               </Text>
             </View>
 
-            <TouchableOpacity style={styles.primaryButton} onPress={async () => { await loadAdminQueue(); setScreen("adminQueue"); }}>
-              <Text style={styles.primaryButtonText}>Open Review Queue</Text>
+            <TouchableOpacity
+              style={styles.primaryButton}
+              onPress={async () => {
+                if (analytics.statuses?.readyForPayout > 0) setAdminFilter("Ready For Payout");
+                else if (analytics.statuses?.pendingReview > 0) setAdminFilter("Pending");
+                else setAdminFilter("All");
+
+                await loadAdminQueue();
+                setScreen("adminQueue");
+              }}
+            >
+              <Text style={styles.primaryButtonText}>Open Smart Queue</Text>
             </TouchableOpacity>
 
             <TouchableOpacity style={styles.primaryButton} onPress={loadAnalytics}>
