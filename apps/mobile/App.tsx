@@ -834,6 +834,15 @@ export default function App() {
             )) : null}
 
             <View style={styles.noticeBox}>
+              <Text style={styles.sectionTitle}>Recommended Actions</Text>
+              {analytics.statuses?.readyForPayout > 0 ? <Text style={styles.body}>• Pay out {analytics.statuses.readyForPayout} ready transaction(s).</Text> : null}
+              {analytics.risk?.highRisk > 0 ? <Text style={styles.body}>• Review {analytics.risk.highRisk} high-risk transaction(s) before payout.</Text> : null}
+              {analytics.statuses?.pendingReview > 0 ? <Text style={styles.body}>• Review {analytics.statuses.pendingReview} pending transaction(s).</Text> : null}
+              {analytics.money?.unpaidOffers > 0 ? <Text style={styles.body}>• Outstanding unpaid offers: {money(analytics.money.unpaidOffers)}.</Text> : null}
+              {analytics.totalTransactions === 0 ? <Text style={styles.body}>• No transactions yet. Submit a test card to validate the full flow.</Text> : null}
+            </View>
+
+            <View style={styles.noticeBox}>
               <Text style={styles.sectionTitle}>Export Summary</Text>
               <Text style={styles.body}>
                 CardHarbor Summary: {analytics.totalTransactions} transactions, {money(analytics.money?.totalOffers)} in offers, {money(analytics.money?.totalPaid)} paid, {analytics.rates?.approvalRate}% approval rate, {analytics.risk?.highRisk} high-risk transactions.
