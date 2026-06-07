@@ -114,6 +114,7 @@ export default function App() {
   const [fraud, setFraud] = useState<any>(null);
   const [csvPreview, setCsvPreview] = useState("");
   const [earnings, setEarnings] = useState<any>(null);
+  const [userHistoryFilter, setUserHistoryFilter] = useState("All");
 
   useEffect(() => {
     boot();
@@ -633,11 +634,43 @@ export default function App() {
           </View>
         )}
 
-        {screen === "history" && (
-          <TransactionList title="History" items={transactions} onOpen={(i) => { setSelectedTransaction(i); setScreen("detail"); }} onRefresh={loadHistory} onBack={() => setScreen("home")} />
-        )}
+        
+{screen === "history" && (
+  <View>
 
-        {screen === "detail" && selectedTransaction && (
+    <View style={styles.card}>
+      <Text style={styles.title}>History Filter</Text>
+
+      {["All","In Review","Approved","Ready For Payout","Paid","Rejected"].map((f) => (
+        <TouchableOpacity
+          key={f}
+          style={userHistoryFilter === f ? styles.primaryButton : styles.secondaryButton}
+          onPress={() => setUserHistoryFilter(f)}
+        >
+          <Text style={userHistoryFilter === f ? styles.primaryButtonText : styles.secondaryButtonText}>
+            {f}
+          </Text>
+        </TouchableOpacity>
+      ))}
+    </View>
+
+    <TransactionList
+      title="Transaction History"
+      items={transactions.filter(t => {
+        if (userHistoryFilter === "All") return true;
+        if (userHistoryFilter === "In Review")
+          return t.status === "Submitted" ||
+                 t.status === "Pending Review" ||
+                 t.status === "Needs More Info";
+        return t.status === userHistoryFilter;
+      })}
+      onOpen={(i) => { setSelectedTransaction(i); setScreen("detail"); }}
+      onRefresh={loadHistory}
+      onBack={() => setScreen("home")}
+    />
+  </View>
+)}
+{screen === "detail" && selectedTransaction && (
           <TransactionDetail item={selectedTransaction} admin={false} onBack={async () => { await loadHistory(); setScreen("history"); }} onHome={() => setScreen("home")} />
         )}
 
