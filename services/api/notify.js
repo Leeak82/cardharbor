@@ -14,6 +14,7 @@ function emailReady() {
 function makeTransporter() {
   return nodemailer.createTransport({
     host: process.env.SMTP_HOST,
+    family: 4,
     port: Number(process.env.SMTP_PORT || 587),
     secure: String(process.env.SMTP_SECURE || "false") === "true",
     connectionTimeout: 4000,
