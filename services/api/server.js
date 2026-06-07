@@ -298,6 +298,9 @@ app.post("/api/transactions", requireAuth, (req, res) => {
     admin_note: "",
     payout_note: "",
     payout_reference: "",
+    payout_amount: null,
+    payout_method_used: "",
+    paid_by: null,
     reviewed_by: null,
     reviewed_at: null,
     paid_at: null,
@@ -439,7 +442,7 @@ app.get("/api/admin/transactions/:id", requireAdmin, (req, res) => {
 
 app.patch("/api/admin/transactions/:id/status", requireAdmin, async (req, res) => {
   const db = loadDb();
-  const { status, admin_note, payout_note, payout_reference } = req.body;
+  const { status, admin_note, payout_note, payout_reference, payout_amount, payout_method_used } = req.body;
 
   const allowed = ["Pending Review", "Approved", "Rejected", "Needs More Info", "Ready For Payout", "Paid"];
 
@@ -454,11 +457,18 @@ app.patch("/api/admin/transactions/:id/status", requireAdmin, async (req, res) =
   transaction.admin_note = admin_note || transaction.admin_note || "";
   transaction.payout_note = payout_note || transaction.payout_note || "";
   transaction.payout_reference = payout_reference || transaction.payout_reference || "";
+  if (payout_amount !== undefined && payout_amount !== null && payout_amount !== "") {
+    transaction.payout_amount = Number(payout_amount);
+  }
+  transaction.payout_method_used = payout_method_used || transaction.payout_method_used || "";
   transaction.reviewed_by = req.user.email;
   transaction.reviewed_at = new Date().toISOString();
 
   if (status === "Paid") {
     transaction.paid_at = new Date().toISOString();
+    transaction.paid_by = req.user.email;
+    if (!transaction.payout_amount) transaction.payout_amount = transaction.offer;
+    if (!transaction.payout_method_used) transaction.payout_method_used = transaction.payout_method || "Manual";
     if (!transaction.payout_note) transaction.payout_note = "Manual payout marked complete.";
   }
 
@@ -477,6 +487,9 @@ app.patch("/api/admin/transactions/:id/status", requireAdmin, async (req, res) =
     admin_note: transaction.admin_note,
     payout_note: transaction.payout_note,
     payout_reference: transaction.payout_reference,
+    payout_amount: transaction.payout_amount,
+    payout_method_used: transaction.payout_method_used,
+    paid_by: transaction.paid_by,
     paid_at: transaction.paid_at
   });
 
