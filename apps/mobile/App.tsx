@@ -111,6 +111,7 @@ export default function App() {
   const [adminSearch, setAdminSearch] = useState("");
   const [analytics, setAnalytics] = useState<any>(null);
   const [ledger, setLedger] = useState<any>(null);
+  const [fraud, setFraud] = useState<any>(null);
 
   useEffect(() => {
     boot();
@@ -356,6 +357,15 @@ export default function App() {
       setTransactions(data.transactions || []);
     } catch (err: any) {
       Alert.alert("CardHarbor", err.message);
+    }
+  }
+
+  async function loadFraud() {
+    try {
+      const data = await request("/api/admin/fraud");
+      setFraud(data);
+    } catch (err: any) {
+      Alert.alert("Fraud Dashboard", err.message);
     }
   }
 
@@ -991,6 +1001,58 @@ export default function App() {
           </View>
         )}
 
+
+        {screen === "adminFraud" && fraud && (
+          <View style={styles.card}>
+            <Text style={styles.title}>Fraud Dashboard</Text>
+
+            <View style={styles.noticeBox}>
+              <Text style={styles.sectionTitle}>Fraud Summary</Text>
+              <Text style={styles.body}>High Risk: {fraud.summary?.highRisk}</Text>
+              <Text style={styles.body}>Medium Risk: {fraud.summary?.mediumRisk}</Text>
+              <Text style={styles.body}>Rejected: {fraud.summary?.rejected}</Text>
+              <Text style={styles.body}>Needs More Info: {fraud.summary?.needsMoreInfo}</Text>
+              <Text style={styles.body}>Duplicate Codes: {fraud.summary?.duplicateCodes}</Text>
+            </View>
+
+            <Text style={styles.sectionTitle}>Duplicate Codes</Text>
+            {fraud.duplicateCodes && fraud.duplicateCodes.length > 0 ? fraud.duplicateCodes.map((d: any) => (
+              <View key={d.code} style={styles.noticeBox}>
+                <Text style={styles.body}>Code: {d.code}</Text>
+                <Text style={styles.body}>Transactions: {d.transaction_ids.join(", ")}</Text>
+              </View>
+            )) : (
+              <Text style={styles.body}>No duplicate codes found.</Text>
+            )}
+
+            <Text style={styles.sectionTitle}>High Risk Transactions</Text>
+            {fraud.highRisk && fraud.highRisk.length > 0 ? fraud.highRisk.map((t: any) => (
+              <TouchableOpacity
+                key={String(t.id)}
+                style={styles.historyItem}
+                onPress={() => {
+                  setSelectedTransaction(t);
+                  setScreen("adminDetail");
+                }}
+              >
+                <Text style={styles.historyTitle}>{t.brand} / {t.status}</Text>
+                <Text style={styles.body}>ID: {t.id}</Text>
+                <Text style={styles.body}>Risk: {t.risk_score}/100</Text>
+                <Text style={styles.body}>Offer: {money(t.offer)}</Text>
+              </TouchableOpacity>
+            )) : (
+              <Text style={styles.body}>No high-risk transactions.</Text>
+            )}
+
+            <TouchableOpacity style={styles.primaryButton} onPress={loadFraud}>
+              <Text style={styles.primaryButtonText}>Refresh Fraud Dashboard</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.secondaryButton} onPress={() => setScreen("adminHome")}>
+              <Text style={styles.secondaryButtonText}>Back</Text>
+            </TouchableOpacity>
+          </View>
+        )}
 
         {screen === "support" && (
           <View style={styles.card}>
