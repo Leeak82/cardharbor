@@ -666,19 +666,54 @@ app.get("/api/admin/fraud", requireAdmin, (req, res) => {
     .filter(([code, ids]) => ids.length > 1)
     .map(([code, ids]) => ({ code, transaction_ids: ids }));
 
+  const rejectedByUser = {};
+  for (const t of rejected) {
+    const uid = t.user_id || "unknown";
+    if (!rejectedByUser[uid]) rejectedByUser[uid] = [];
+    rejectedByUser[uid].push(t);
+  }
+
+  const repeatRejectedUsers = Object.entries(rejectedByUser)
+    .filter(([uid, txs]) => txs.length >= 2)
+    .map(([user_id, txs]) => ({
+      user_id,
+      count: txs.length,
+      transactions: txs.map(t => t.id)
+    }));
+
+  const ocrMismatches = transactions.filter(t =>
+    t.detected_brand &&
+    t.brand &&
+    String(t.detected_brand).toLowerCase() !== String(t.brand).toLowerCase()
+  );
+
+  const highRiskPaid = transactions.filter(t =>
+    Number(t.risk_score || 0) >= 70 && t.status === "Paid"
+  );
+
+  const watchlist = {
+    repeatRejectedUsers,
+    ocrMismatches,
+    highRiskPaid
+  };
+
   res.json({
     summary: {
       highRisk: highRisk.length,
       mediumRisk: mediumRisk.length,
       rejected: rejected.length,
       needsMoreInfo: needsMoreInfo.length,
-      duplicateCodes: duplicateCodes.length
+      duplicateCodes: duplicateCodes.length,
+      repeatRejectedUsers: repeatRejectedUsers.length,
+      ocrMismatches: ocrMismatches.length,
+      highRiskPaid: highRiskPaid.length
     },
     highRisk,
     mediumRisk,
     rejected,
     needsMoreInfo,
-    duplicateCodes
+    duplicateCodes,
+    watchlist
   });
 });
 // ===== END PHASE 10C =====
