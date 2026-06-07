@@ -528,6 +528,77 @@ app.patch("/api/admin/transactions/:id/notes", requireAdmin, (req, res) => {
 // ===== END PHASE 6E =====
 
 
+
+// ===== PHASE 7A ADMIN ANALYTICS =====
+app.get("/api/admin/analytics", requireAdmin, (req, res) => {
+  const db = loadDb();
+  const transactions = db.transactions || [];
+
+  const totalTransactions = transactions.length;
+  const submitted = transactions.filter(t => t.status === "Submitted").length;
+  const pendingReview = transactions.filter(t => t.status === "Pending Review").length;
+  const approved = transactions.filter(t => t.status === "Approved").length;
+  const readyForPayout = transactions.filter(t => t.status === "Ready For Payout").length;
+  const paid = transactions.filter(t => t.status === "Paid").length;
+  const rejected = transactions.filter(t => t.status === "Rejected").length;
+  const needsMoreInfo = transactions.filter(t => t.status === "Needs More Info").length;
+
+  const totalBalance = transactions.reduce((sum, t) => sum + Number(t.balance || 0), 0);
+  const totalOffers = transactions.reduce((sum, t) => sum + Number(t.offer || 0), 0);
+  const totalPaid = transactions.reduce((sum, t) => sum + Number(t.payout_amount || 0), 0);
+
+  const paidTransactions = transactions.filter(t => t.status === "Paid");
+  const approvalRate = totalTransactions ? Math.round(((approved + readyForPayout + paid) / totalTransactions) * 100) : 0;
+  const rejectionRate = totalTransactions ? Math.round((rejected / totalTransactions) * 100) : 0;
+  const payoutCompletionRate = totalTransactions ? Math.round((paid / totalTransactions) * 100) : 0;
+
+  const highRisk = transactions.filter(t => Number(t.risk_score || 0) >= 70).length;
+  const mediumRisk = transactions.filter(t => Number(t.risk_score || 0) >= 35 && Number(t.risk_score || 0) < 70).length;
+  const lowRisk = transactions.filter(t => Number(t.risk_score || 0) < 35).length;
+
+  const brandTotals = {};
+  for (const t of transactions) {
+    const brand = t.brand || "Unknown";
+    if (!brandTotals[brand]) brandTotals[brand] = { count: 0, balance: 0, offer: 0 };
+    brandTotals[brand].count += 1;
+    brandTotals[brand].balance += Number(t.balance || 0);
+    brandTotals[brand].offer += Number(t.offer || 0);
+  }
+
+  res.json({
+    totalTransactions,
+    statuses: {
+      submitted,
+      pendingReview,
+      approved,
+      readyForPayout,
+      paid,
+      rejected,
+      needsMoreInfo
+    },
+    money: {
+      totalBalance,
+      totalOffers,
+      totalPaid,
+      unpaidOffers: totalOffers - totalPaid
+    },
+    rates: {
+      approvalRate,
+      rejectionRate,
+      payoutCompletionRate
+    },
+    risk: {
+      lowRisk,
+      mediumRisk,
+      highRisk
+    },
+    brandTotals,
+    paidTransactions: paidTransactions.length
+  });
+});
+// ===== END PHASE 7A =====
+
+
 app.listen(PORT, "0.0.0.0", () => {
   console.log(`CardHarbor API running on port ${PORT}`);
 });
