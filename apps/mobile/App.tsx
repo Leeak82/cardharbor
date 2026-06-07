@@ -972,6 +972,10 @@ export default function App() {
               <Text style={styles.primaryButtonText}>Refresh Ledger</Text>
             </TouchableOpacity>
 
+            <TouchableOpacity style={styles.secondaryButton} onPress={() => loadCsvPreview("/api/admin/export/ledger.csv")}>
+              <Text style={styles.secondaryButtonText}>Preview Ledger CSV</Text>
+            </TouchableOpacity>
+
             <TouchableOpacity style={styles.secondaryButton} onPress={() => setScreen("adminHome")}>
               <Text style={styles.secondaryButtonText}>Back</Text>
             </TouchableOpacity>
