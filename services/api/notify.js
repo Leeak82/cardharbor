@@ -22,7 +22,7 @@ async function notify(event, data = {}) {
 
     const result = await resend.emails.send({
       from: process.env.NOTIFY_FROM || "CardHarbor <onboarding@resend.dev>",
-      to: process.env.NOTIFY_TO,
+      to: data.notify_to || process.env.NOTIFY_TO,
       subject: `CardHarbor Alert: ${event}`,
       text: JSON.stringify(payload, null, 2),
     });

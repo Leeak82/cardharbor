@@ -437,7 +437,7 @@ app.get("/api/admin/transactions/:id", requireAdmin, (req, res) => {
   res.json({ transaction: attachUserData(db, [transaction])[0] });
 });
 
-app.patch("/api/admin/transactions/:id/status", requireAdmin, (req, res) => {
+app.patch("/api/admin/transactions/:id/status", requireAdmin, async (req, res) => {
   const db = loadDb();
   const { status, admin_note, payout_note, payout_reference } = req.body;
 
@@ -463,6 +463,22 @@ app.patch("/api/admin/transactions/:id/status", requireAdmin, (req, res) => {
   }
 
   saveDb(db);
+
+  const user = db.users.find(u => u.id === transaction.user_id);
+
+  await notify("transaction_status_updated", {
+    notify_to: user?.email,
+    transaction_id: transaction.id,
+    user_email: user?.email,
+    status: transaction.status,
+    brand: transaction.brand,
+    balance: transaction.balance,
+    offer: transaction.offer,
+    admin_note: transaction.admin_note,
+    payout_note: transaction.payout_note,
+    payout_reference: transaction.payout_reference,
+    paid_at: transaction.paid_at
+  });
 
   res.json({
     message: "Transaction updated",
