@@ -642,7 +642,7 @@ export default function App() {
                   t.status === adminFilter;
 
                 return matchesSearch && matchesFilter;
-              })}
+              }).sort((a, b) => Number(b.id) - Number(a.id))}
               onOpen={(i) => { setSelectedTransaction(i); setAdminNote(i.admin_note || ""); setPayoutNote(i.payout_note || ""); setPayoutReference(i.payout_reference || ""); setPayoutAmount(String(i.payout_amount || i.offer || "")); setPayoutMethodUsed(i.payout_method_used || i.payout_method || ""); setScreen("adminDetail"); }}
               onRefresh={loadAdminQueue}
               onBack={() => setScreen("adminHome")}
