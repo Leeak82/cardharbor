@@ -1089,6 +1089,42 @@ export default function App() {
               <Text style={styles.body}>Duplicate Codes: {fraud.summary?.duplicateCodes}</Text>
             </View>
 
+            <Text style={styles.sectionTitle}>Watchlist</Text>
+
+            <View style={styles.noticeBox}>
+              <Text style={styles.body}>Repeat Rejected Users: {fraud.summary?.repeatRejectedUsers || 0}</Text>
+              <Text style={styles.body}>OCR Brand Mismatches: {fraud.summary?.ocrMismatches || 0}</Text>
+              <Text style={styles.body}>High-Risk Paid: {fraud.summary?.highRiskPaid || 0}</Text>
+            </View>
+
+            {fraud.watchlist?.repeatRejectedUsers?.length > 0 ? fraud.watchlist.repeatRejectedUsers.map((u: any) => (
+              <View key={String(u.user_id)} style={styles.noticeBox}>
+                <Text style={styles.sectionTitle}>Repeat Rejected User</Text>
+                <Text style={styles.body}>User ID: {u.user_id}</Text>
+                <Text style={styles.body}>Rejected Count: {u.count}</Text>
+                <Text style={styles.body}>Transactions: {u.transactions.join(", ")}</Text>
+              </View>
+            )) : null}
+
+            {fraud.watchlist?.ocrMismatches?.length > 0 ? fraud.watchlist.ocrMismatches.map((t: any) => (
+              <View key={String(t.id)} style={styles.noticeBox}>
+                <Text style={styles.sectionTitle}>OCR Brand Mismatch</Text>
+                <Text style={styles.body}>ID: {t.id}</Text>
+                <Text style={styles.body}>Selected: {t.brand}</Text>
+                <Text style={styles.body}>OCR: {t.detected_brand}</Text>
+                <Text style={styles.body}>Status: {t.status}</Text>
+              </View>
+            )) : null}
+
+            {fraud.watchlist?.highRiskPaid?.length > 0 ? fraud.watchlist.highRiskPaid.map((t: any) => (
+              <View key={String(t.id)} style={styles.noticeBox}>
+                <Text style={styles.sectionTitle}>High-Risk Paid Transaction</Text>
+                <Text style={styles.body}>ID: {t.id}</Text>
+                <Text style={styles.body}>Risk: {t.risk_score}/100</Text>
+                <Text style={styles.body}>Paid: {money(t.payout_amount || t.offer)}</Text>
+              </View>
+            )) : null}
+
             <Text style={styles.sectionTitle}>Duplicate Codes</Text>
             {fraud.duplicateCodes && fraud.duplicateCodes.length > 0 ? fraud.duplicateCodes.map((d: any) => (
               <View key={d.code} style={styles.noticeBox}>
