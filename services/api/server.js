@@ -741,6 +741,53 @@ app.get("/api/admin/export/ledger.csv", requireAdmin, (req, res) => {
 // ===== END PHASE 10E =====
 
 
+
+// ===== PHASE 11A USER EARNINGS =====
+app.get("/api/earnings", requireAuth, (req, res) => {
+  const db = loadDb();
+
+  const transactions = (db.transactions || [])
+    .filter(t => String(t.user_id) === String(req.user.id));
+
+  const paid = transactions.filter(t => t.status === "Paid");
+
+  const totalEarned = paid.reduce(
+    (sum, t) => sum + Number(t.payout_amount || t.offer || 0),
+    0
+  );
+
+  const pendingAmount = transactions
+    .filter(t => t.status !== "Paid" && t.status !== "Rejected")
+    .reduce(
+      (sum, t) => sum + Number(t.offer || 0),
+      0
+    );
+
+  let avgPayoutHours = 0;
+
+  if (paid.length) {
+    const hours = paid.map(t => {
+      const start = new Date(t.created_at).getTime();
+      const end = new Date(t.paid_at || t.created_at).getTime();
+      return (end - start) / 3600000;
+    });
+
+    avgPayoutHours =
+      Math.round(
+        (hours.reduce((a, b) => a + b, 0) / hours.length) * 10
+      ) / 10;
+  }
+
+  res.json({
+    totalTransactions: transactions.length,
+    paidTransactions: paid.length,
+    totalEarned,
+    pendingAmount,
+    avgPayoutHours
+  });
+});
+// ===== END PHASE 11A =====
+
 app.listen(PORT, "0.0.0.0", () => {
   console.log(`CardHarbor API running on port ${PORT}`);
 });
