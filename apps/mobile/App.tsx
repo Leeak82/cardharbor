@@ -866,6 +866,10 @@ export default function App() {
               </Text>
             </View>
 
+            <TouchableOpacity style={styles.primaryButton} onPress={async () => { await loadAdminQueue(); setScreen("adminQueue"); }}>
+              <Text style={styles.primaryButtonText}>Open Review Queue</Text>
+            </TouchableOpacity>
+
             <TouchableOpacity style={styles.primaryButton} onPress={loadAnalytics}>
               <Text style={styles.primaryButtonText}>Refresh Analytics</Text>
             </TouchableOpacity>
