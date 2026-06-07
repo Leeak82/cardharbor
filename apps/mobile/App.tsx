@@ -105,6 +105,8 @@ export default function App() {
   const [adminNote, setAdminNote] = useState("");
   const [payoutNote, setPayoutNote] = useState("");
   const [payoutReference, setPayoutReference] = useState("");
+  const [payoutAmount, setPayoutAmount] = useState("");
+  const [payoutMethodUsed, setPayoutMethodUsed] = useState("");
 
   useEffect(() => {
     boot();
@@ -602,7 +604,7 @@ export default function App() {
         )}
 
         {screen === "adminQueue" && (
-          <TransactionList title="Admin Review Queue" items={transactions} onOpen={(i) => { setSelectedTransaction(i); setAdminNote(i.admin_note || ""); setPayoutNote(i.payout_note || ""); setPayoutReference(i.payout_reference || ""); setScreen("adminDetail"); }} onRefresh={loadAdminQueue} onBack={() => setScreen("adminHome")} />
+          <TransactionList title="Admin Review Queue" items={transactions} onOpen={(i) => { setSelectedTransaction(i); setAdminNote(i.admin_note || ""); setPayoutNote(i.payout_note || ""); setPayoutReference(i.payout_reference || ""); setPayoutAmount(String(i.payout_amount || i.offer || "")); setPayoutMethodUsed(i.payout_method_used || i.payout_method || ""); setScreen("adminDetail"); }} onRefresh={loadAdminQueue} onBack={() => setScreen("adminHome")} />
         )}
 
         {screen === "adminDetail" && selectedTransaction && (
@@ -617,6 +619,12 @@ export default function App() {
 
               <Text style={styles.label}>Payout Reference</Text>
               <TextInput style={styles.input} value={payoutReference} onChangeText={setPayoutReference} placeholder="Cash App/Venmo/ACH confirmation ID" />
+
+              <Text style={styles.label}>Payout Amount</Text>
+              <TextInput style={styles.input} value={payoutAmount} onChangeText={setPayoutAmount} placeholder="Amount actually paid" keyboardType="numeric" />
+
+              <Text style={styles.label}>Payout Method Used</Text>
+              <TextInput style={styles.input} value={payoutMethodUsed} onChangeText={setPayoutMethodUsed} placeholder="Cash App / Venmo / ACH / Other" />
 
               <Text style={styles.label}>Payout Note</Text>
               <TextInput style={styles.input} value={payoutNote} onChangeText={setPayoutNote} placeholder="Payout note visible to user" />
@@ -635,6 +643,8 @@ export default function App() {
                         admin_note: adminNote,
                         payout_note: payoutNote,
                         payout_reference: payoutReference,
+                        payout_amount: payoutAmount,
+                        payout_method_used: payoutMethodUsed,
                       }),
                     });
 
