@@ -682,7 +682,43 @@ export default function App() {
                 <Text style={styles.primaryButtonText}>Ready For Payout</Text>
               </TouchableOpacity>
 
-              <TouchableOpacity style={styles.primaryButton} onPress={() => updateStatus("Paid")}>
+              <TouchableOpacity
+                style={styles.primaryButton}
+                onPress={async () => {
+                  if (!selectedTransaction) return;
+
+                  try {
+                    const res = await fetch(`${API_URL}/api/admin/transactions/${selectedTransaction.id}/status`, {
+                      method: "PATCH",
+                      headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${adminToken}`,
+                      },
+                      body: JSON.stringify({
+                        status: "Paid",
+                        admin_note: adminNote,
+                        payout_note: payoutNote || "Manual payout marked complete.",
+                        payout_reference: payoutReference,
+                        payout_amount: payoutAmount || selectedTransaction.offer,
+                        payout_method_used: payoutMethodUsed || selectedTransaction.payout_method || "Manual",
+                      }),
+                    });
+
+                    const data = await res.json();
+
+                    if (!res.ok) {
+                      alert(data.error || "Failed to mark paid");
+                      return;
+                    }
+
+                    setSelectedTransaction(data.transaction);
+                    alert("Marked paid and payout receipt saved");
+                    await loadAdminQueue();
+                  } catch (err) {
+                    alert("Network error marking paid");
+                  }
+                }}
+              >
                 <Text style={styles.primaryButtonText}>Mark Paid</Text>
               </TouchableOpacity>
 
