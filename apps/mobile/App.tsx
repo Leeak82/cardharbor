@@ -110,6 +110,7 @@ export default function App() {
   const [adminFilter, setAdminFilter] = useState("All");
   const [adminSearch, setAdminSearch] = useState("");
   const [analytics, setAnalytics] = useState<any>(null);
+  const [ledger, setLedger] = useState<any>(null);
 
   useEffect(() => {
     boot();
@@ -355,6 +356,15 @@ export default function App() {
       setTransactions(data.transactions || []);
     } catch (err: any) {
       Alert.alert("CardHarbor", err.message);
+    }
+  }
+
+  async function loadLedger() {
+    try {
+      const data = await request("/api/admin/ledger");
+      setLedger(data);
+    } catch (err: any) {
+      Alert.alert("Ledger", err.message);
     }
   }
 
@@ -882,6 +892,49 @@ export default function App() {
 
             <TouchableOpacity style={styles.primaryButton} onPress={loadAnalytics}>
               <Text style={styles.primaryButtonText}>Refresh Analytics</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.secondaryButton} onPress={() => setScreen("adminHome")}>
+              <Text style={styles.secondaryButtonText}>Back</Text>
+            </TouchableOpacity>
+          </View>
+        )}
+
+        {screen === "adminLedger" && ledger && (
+          <View style={styles.card}>
+            <Text style={styles.title}>Payout Ledger</Text>
+
+            <View style={styles.noticeBox}>
+              <Text style={styles.sectionTitle}>Ledger Summary</Text>
+              <Text style={styles.body}>Entries: {ledger.count}</Text>
+              <Text style={styles.body}>Total Paid: {money(ledger.totalPaid)}</Text>
+            </View>
+
+            <Text style={styles.sectionTitle}>By Method</Text>
+            {ledger.byMethod ? Object.entries(ledger.byMethod).map(([method, data]: any) => (
+              <View key={method} style={styles.noticeBox}>
+                <Text style={styles.body}>{method}</Text>
+                <Text style={styles.body}>Count: {data.count}</Text>
+                <Text style={styles.body}>Total: {money(data.total)}</Text>
+              </View>
+            )) : null}
+
+            <Text style={styles.sectionTitle}>Entries</Text>
+            {ledger.entries && ledger.entries.length > 0 ? ledger.entries.map((e: any) => (
+              <View key={String(e.ledger_id)} style={styles.historyItem}>
+                <Text style={styles.historyTitle}>{money(e.amount)} via {e.method}</Text>
+                <Text style={styles.body}>Transaction: {e.transaction_id}</Text>
+                <Text style={styles.body}>User: {e.user_email || e.user_id}</Text>
+                <Text style={styles.body}>Reference: {e.reference || "None"}</Text>
+                <Text style={styles.body}>By: {e.created_by}</Text>
+                <Text style={styles.body}>At: {e.created_at}</Text>
+              </View>
+            )) : (
+              <Text style={styles.body}>No payout ledger entries yet.</Text>
+            )}
+
+            <TouchableOpacity style={styles.primaryButton} onPress={loadLedger}>
+              <Text style={styles.primaryButtonText}>Refresh Ledger</Text>
             </TouchableOpacity>
 
             <TouchableOpacity style={styles.secondaryButton} onPress={() => setScreen("adminHome")}>
