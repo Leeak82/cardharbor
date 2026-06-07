@@ -12,6 +12,7 @@
     "dotenv": "latest",
     "express": "latest",
     "jsonwebtoken": "latest",
-    "nodemailer": "^8.0.10"
+    "nodemailer": "^8.0.10",
+    "resend": "^6.12.4"
   }
 }
