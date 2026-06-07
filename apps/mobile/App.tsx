@@ -668,6 +668,36 @@ function Stat({ label, value }: { label: string; value: any }) {
   );
 }
 
+
+function StatusTimeline({ status }: { status: string }) {
+  const steps = ["Submitted", "Pending Review", "Approved", "Ready For Payout", "Paid"];
+  const rejected = status === "Rejected";
+  const needsInfo = status === "Needs More Info";
+
+  return (
+    <View style={styles.noticeBox}>
+      <Text style={styles.sectionTitle}>Status Timeline</Text>
+
+      {rejected ? (
+        <Text style={styles.dangerButtonText}>Rejected</Text>
+      ) : needsInfo ? (
+        <Text style={styles.dangerButtonText}>Needs More Info</Text>
+      ) : (
+        steps.map((step, index) => {
+          const activeIndex = steps.indexOf(status);
+          const active = index <= activeIndex;
+
+          return (
+            <Text key={step} style={{ fontWeight: active ? "900" : "500", color: active ? "#1565c0" : "#64748b", marginBottom: 4 }}>
+              {active ? "✓" : "○"} {step}
+            </Text>
+          );
+        })
+      )}
+    </View>
+  );
+}
+
 function riskColor(score?: number) {
   const n = Number(score || 0);
   if (n >= 75) return "#dc2626";
@@ -793,6 +823,26 @@ function TransactionDetail({ item, admin, onBack, onHome }: { item: Transaction;
       <View style={styles.detailRow}><Text style={styles.detailKey}>Offer</Text><Text>${item.offer}</Text></View>
       <View style={styles.detailRow}><Text style={styles.detailKey}>Payout</Text><Text>{item.payout_method}</Text></View>
       <View style={styles.detailRow}><Text style={styles.detailKey}>Status</Text><Text>{item.status}</Text></View>
+
+      <StatusTimeline status={item.status} />
+
+      {item.risk_score !== undefined ? (
+        <View style={{ marginTop: 10, padding: 10, borderRadius: 10, backgroundColor: "#f8fafc", borderWidth: 1, borderColor: riskColor(item.risk_score) }}>
+          <Text style={{ fontWeight: "800", color: riskColor(item.risk_score) }}>
+            Risk Score: {item.risk_score}/100
+          </Text>
+          <Text style={{ fontWeight: "700", color: riskColor(item.risk_score), marginTop: 2 }}>
+            {item.risk_badge || "Low Risk"}
+          </Text>
+          {item.risk_reasons && item.risk_reasons.length > 0 ? (
+            <View style={{ marginTop: 6 }}>
+              {item.risk_reasons.map((reason, index) => (
+                <Text key={index} style={{ fontSize: 12, color: "#334155" }}>• {reason}</Text>
+              ))}
+            </View>
+          ) : null}
+        </View>
+      ) : null}
 
       {admin ? (
         <View style={styles.noticeBox}>
