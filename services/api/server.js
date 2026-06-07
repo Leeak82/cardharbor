@@ -641,6 +641,49 @@ app.get("/api/admin/ledger", requireAdmin, (req, res) => {
 // ===== END PHASE 8A =====
 
 
+
+// ===== PHASE 10C FRAUD DASHBOARD =====
+app.get("/api/admin/fraud", requireAdmin, (req, res) => {
+  const db = loadDb();
+  const transactions = db.transactions || [];
+
+  const highRisk = transactions.filter(t => Number(t.risk_score || 0) >= 70);
+  const mediumRisk = transactions.filter(t => Number(t.risk_score || 0) >= 35 && Number(t.risk_score || 0) < 70);
+  const rejected = transactions.filter(t => t.status === "Rejected");
+  const needsMoreInfo = transactions.filter(t => t.status === "Needs More Info");
+
+  const codeMap = {};
+  for (const t of transactions) {
+    for (const code of t.possible_codes || []) {
+      const clean = String(code).trim().toUpperCase();
+      if (!clean) continue;
+      if (!codeMap[clean]) codeMap[clean] = [];
+      codeMap[clean].push(t.id);
+    }
+  }
+
+  const duplicateCodes = Object.entries(codeMap)
+    .filter(([code, ids]) => ids.length > 1)
+    .map(([code, ids]) => ({ code, transaction_ids: ids }));
+
+  res.json({
+    summary: {
+      highRisk: highRisk.length,
+      mediumRisk: mediumRisk.length,
+      rejected: rejected.length,
+      needsMoreInfo: needsMoreInfo.length,
+      duplicateCodes: duplicateCodes.length
+    },
+    highRisk,
+    mediumRisk,
+    rejected,
+    needsMoreInfo,
+    duplicateCodes
+  });
+});
+// ===== END PHASE 10C =====
+
+
 app.listen(PORT, "0.0.0.0", () => {
   console.log(`CardHarbor API running on port ${PORT}`);
 });
