@@ -18,18 +18,7 @@ const ADMIN_PASSWORD = "admin123";
 const DB_FILE = "./db.json";
 const UPLOAD_DIR = "./uploads";
 
-app.use(cors());
-
-app.get("/api/test-email", async (req, res) => {
-  try {
-    const result = await notify("test_email", {
-      message: "CardHarbor email test from Render"
-    });
-    res.json({ ok: true, result });
-  } catch (err) {
-    res.status(500).json({ ok: false, error: err.message });
-  }
-});
+app.use(cors());\n
 app.get("/api/health", (req, res) => {
   res.json({
     ok: true,
@@ -437,7 +426,7 @@ app.get("/api/admin/transactions/:id", requireAdmin, (req, res) => {
   res.json({ transaction: attachUserData(db, [transaction])[0] });
 });
 
-app.patch("/api/admin/transactions/:id/status", requireAdmin, async (req, res) => {
+app.patch("/api/admin/transactions/:id/status", requireAdmin, (req, res) => {
   const db = loadDb();
   const { status, admin_note, payout_note, payout_reference } = req.body;
 
@@ -464,55 +453,11 @@ app.patch("/api/admin/transactions/:id/status", requireAdmin, async (req, res) =
 
   saveDb(db);
 
-  const user = db.users.find(u => u.id === transaction.user_id);
-
-  await notify("transaction_status_updated", {
-    notify_to: user?.email,
-    transaction_id: transaction.id,
-    user_email: user?.email,
-    status: transaction.status,
-    brand: transaction.brand,
-    balance: transaction.balance,
-    offer: transaction.offer,
-    admin_note: transaction.admin_note,
-    payout_note: transaction.payout_note,
-    payout_reference: transaction.payout_reference,
-    paid_at: transaction.paid_at
-  });
-
   res.json({
     message: "Transaction updated",
     transaction: attachUserData(db, [transaction])[0]
   });
 });
-
-
-
-// ===== PHASE 6E ADMIN NOTES =====
-app.patch("/api/admin/transactions/:id/notes", requireAdmin, (req, res) => {
-  try {
-    const { admin_note = "", payout_note = "", payout_reference = "" } = req.body || {};
-    const tx = db.transactions.find(t => String(t.id) === String(req.params.id));
-
-    if (!tx) {
-      return res.status(404).json({ error: "Transaction not found" });
-    }
-
-    tx.admin_note = String(admin_note || "");
-    tx.payout_note = String(payout_note || "");
-    tx.payout_reference = String(payout_reference || "");
-    tx.notes_updated_at = new Date().toISOString();
-
-    saveDb();
-
-    res.json({ ok: true, transaction: tx });
-  } catch (err) {
-    console.error("Save admin notes failed:", err);
-    res.status(500).json({ error: "Failed to save admin notes" });
-  }
-});
-// ===== END PHASE 6E =====
-
 
 app.listen(PORT, "0.0.0.0", () => {
   console.log(`CardHarbor API running on port ${PORT}`);
