@@ -149,11 +149,35 @@
       "admin_note": "",
       "payout_note": "",
       "payout_reference": "",
+      "reviewed_by": "admin@cardharbor.app",
+      "reviewed_at": "2026-06-07T08:09:46.960Z",
+      "paid_at": null,
+      "status": "Rejected",
+      "created_at": "2026-06-07T06:19:14.250Z"
+    },
+    {
+      "id": 1780819748012,
+      "user_id": 1780697934500,
+      "brand": "Amazon",
+      "detected_brand": "Amazon",
+      "balance": 9999,
+      "detected_balance": null,
+      "rate": 0.78,
+      "offer": 7799.22,
+      "payout_method": "Cash App",
+      "image_url": null,
+      "ocr_text": "",
+      "ocr_available": false,
+      "ocr_error": "No image uploaded",
+      "possible_codes": [],
+      "admin_note": "",
+      "payout_note": "",
+      "payout_reference": "",
       "reviewed_by": null,
       "reviewed_at": null,
       "paid_at": null,
       "status": "Submitted",
-      "created_at": "2026-06-07T06:19:14.250Z"
+      "created_at": "2026-06-07T08:09:08.013Z"
     }
   ],
   "payoutProfiles": [

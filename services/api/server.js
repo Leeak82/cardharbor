@@ -8,6 +8,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { execSync } = require("child_process");
 const { calculateRiskScore } = require("./riskEngine");
+const { notify } = require("./notify");
 
 const app = express();
 const PORT = process.env.PORT || 8080;
@@ -323,6 +324,15 @@ app.post("/api/transactions/:id/image", requireAuth, express.raw({ type: "*/*", 
   transaction.status = "Pending Review";
 
   saveDb(db);
+
+  notify("image_uploaded_risk_scored", {
+    transaction_id: transaction.id,
+    user_id: transaction.user_id,
+    risk_score: transaction.risk_score,
+    risk_badge: transaction.risk_badge,
+    risk_reasons: transaction.risk_reasons
+  });
+
   res.json({ message: "Image uploaded", transaction });
 });
 
