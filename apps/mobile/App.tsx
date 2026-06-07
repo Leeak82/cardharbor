@@ -375,7 +375,7 @@ export default function App() {
         return;
       }
 
-      setCsvPreview(text.slice(0, 5000));
+      setCsvPreview(text.length > 20000 ? text.slice(0, 20000) + "\n\n--- CSV TRUNCATED FOR MOBILE PREVIEW ---" : text);
       setScreen("csvPreview");
     } catch (err: any) {
       Alert.alert("CSV Export", err.message);
@@ -1079,6 +1079,7 @@ export default function App() {
         {screen === "csvPreview" && (
           <View style={styles.card}>
             <Text style={styles.title}>CSV Preview</Text>
+            <Text style={styles.body}>Long press the text below to copy.</Text>
             <Text selectable style={styles.ocrBox}>{csvPreview || "No CSV loaded."}</Text>
 
             <TouchableOpacity style={styles.secondaryButton} onPress={() => setScreen("adminHome")}>
