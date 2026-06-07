@@ -107,6 +107,7 @@ export default function App() {
   const [payoutReference, setPayoutReference] = useState("");
   const [payoutAmount, setPayoutAmount] = useState("");
   const [payoutMethodUsed, setPayoutMethodUsed] = useState("");
+  const [adminFilter, setAdminFilter] = useState("All");
 
   useEffect(() => {
     boot();
@@ -604,7 +605,29 @@ export default function App() {
         )}
 
         {screen === "adminQueue" && (
-          <TransactionList title="Admin Review Queue" items={transactions} onOpen={(i) => { setSelectedTransaction(i); setAdminNote(i.admin_note || ""); setPayoutNote(i.payout_note || ""); setPayoutReference(i.payout_reference || ""); setPayoutAmount(String(i.payout_amount || i.offer || "")); setPayoutMethodUsed(i.payout_method_used || i.payout_method || ""); setScreen("adminDetail"); }} onRefresh={loadAdminQueue} onBack={() => setScreen("adminHome")} />
+          <View>
+            <View style={styles.card}>
+              <Text style={styles.title}>Queue Filter</Text>
+
+              {["All", "Pending", "Ready For Payout", "Paid", "Rejected"].map((f) => (
+                <TouchableOpacity key={f} style={adminFilter === f ? styles.primaryButton : styles.secondaryButton} onPress={() => setAdminFilter(f)}>
+                  <Text style={adminFilter === f ? styles.primaryButtonText : styles.secondaryButtonText}>{f}</Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+
+            <TransactionList
+              title="Admin Review Queue"
+              items={transactions.filter(t => {
+                if (adminFilter === "All") return true;
+                if (adminFilter === "Pending") return t.status === "Pending Review" || t.status === "Submitted";
+                return t.status === adminFilter;
+              })}
+              onOpen={(i) => { setSelectedTransaction(i); setAdminNote(i.admin_note || ""); setPayoutNote(i.payout_note || ""); setPayoutReference(i.payout_reference || ""); setPayoutAmount(String(i.payout_amount || i.offer || "")); setPayoutMethodUsed(i.payout_method_used || i.payout_method || ""); setScreen("adminDetail"); }}
+              onRefresh={loadAdminQueue}
+              onBack={() => setScreen("adminHome")}
+            />
+          </View>
         )}
 
         {screen === "adminDetail" && selectedTransaction && (
