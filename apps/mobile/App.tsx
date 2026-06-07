@@ -915,8 +915,11 @@ function TransactionDetail({ item, admin, onBack, onHome }: { item: Transaction;
       ) : null}
 
       {item.admin_note ? <View style={styles.detailRow}><Text style={styles.detailKey}>Admin Note</Text><Text>{item.admin_note}</Text></View> : null}
+      {item.payout_amount ? <View style={styles.detailRow}><Text style={styles.detailKey}>Payout Amount</Text><Text>${item.payout_amount}</Text></View> : null}
+      {item.payout_method_used ? <View style={styles.detailRow}><Text style={styles.detailKey}>Method Used</Text><Text>{item.payout_method_used}</Text></View> : null}
       {item.payout_reference ? <View style={styles.detailRow}><Text style={styles.detailKey}>Payout Ref</Text><Text>{item.payout_reference}</Text></View> : null}
       {item.payout_note ? <View style={styles.detailRow}><Text style={styles.detailKey}>Payout Note</Text><Text>{item.payout_note}</Text></View> : null}
+      {item.paid_by ? <View style={styles.detailRow}><Text style={styles.detailKey}>Paid By</Text><Text>{item.paid_by}</Text></View> : null}
       {item.paid_at ? <View style={styles.detailRow}><Text style={styles.detailKey}>Paid At</Text><Text>{item.paid_at}</Text></View> : null}
 
       <Text style={styles.sectionTitle}>Possible Codes</Text>
