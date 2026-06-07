@@ -790,6 +790,14 @@ export default function App() {
           <View style={styles.card}>
             <Text style={styles.title}>Analytics Dashboard</Text>
 
+            <View style={styles.noticeBox}>
+              <Text style={styles.sectionTitle}>Snapshot</Text>
+              <Text style={styles.body}>Transactions: {analytics.totalTransactions}</Text>
+              <Text style={styles.body}>Total Offers: {money(analytics.money?.totalOffers)}</Text>
+              <Text style={styles.body}>Total Paid: {money(analytics.money?.totalPaid)}</Text>
+              <Text style={styles.body}>High Risk: {analytics.risk?.highRisk}</Text>
+            </View>
+
             <Text style={styles.sectionTitle}>Volume</Text>
             <Text style={styles.body}>Total Transactions: {analytics.totalTransactions}</Text>
             <Text style={styles.body}>Submitted: {analytics.statuses?.submitted}</Text>
