@@ -16,9 +16,9 @@ function makeTransporter() {
     host: process.env.SMTP_HOST,
     port: Number(process.env.SMTP_PORT || 587),
     secure: String(process.env.SMTP_SECURE || "false") === "true",
-    connectionTimeout: 8000,
-    greetingTimeout: 8000,
-    socketTimeout: 10000,
+    connectionTimeout: 4000,
+    greetingTimeout: 4000,
+    socketTimeout: 5000,
     auth: {
       user: process.env.SMTP_USER,
       pass: process.env.SMTP_PASS,
@@ -36,19 +36,31 @@ async function notify(event, data = {}) {
   console.log("[CardHarbor Notify]", JSON.stringify(payload, null, 2));
 
   if (!emailReady()) {
+    console.log("[CardHarbor Notify] Email not configured. Console only.");
     return { sent: false, mode: "console", payload };
   }
 
-  const transporter = makeTransporter();
+  try {
+    const transporter = makeTransporter();
 
-  await transporter.sendMail({
-    from: process.env.NOTIFY_FROM,
-    to: process.env.NOTIFY_TO,
-    subject: `CardHarbor Alert: ${event}`,
-    text: JSON.stringify(payload, null, 2),
-  });
+    const result = await Promise.race([
+      transporter.sendMail({
+        from: process.env.NOTIFY_FROM,
+        to: process.env.NOTIFY_TO,
+        subject: `CardHarbor Alert: ${event}`,
+        text: JSON.stringify(payload, null, 2),
+      }),
+      new Promise((_, reject) =>
+        setTimeout(() => reject(new Error("SMTP timeout")), 6000)
+      ),
+    ]);
 
-  return { sent: true, mode: "smtp", payload };
+    console.log("[CardHarbor Notify] Email sent", result.messageId || "");
+    return { sent: true, mode: "smtp", messageId: result.messageId || null, payload };
+  } catch (err) {
+    console.log("[CardHarbor Notify] Email failed:", err.message);
+    return { sent: false, mode: "smtp_failed", error: err.message, payload };
+  }
 }
 
 module.exports = {
