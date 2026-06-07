@@ -637,7 +637,7 @@ export default function App() {
                 placeholder="Search ID, email, brand, status, ref"
               />
 
-              {["All", "Pending", "Ready For Payout", "Paid", "Rejected"].map((f) => (
+              {["All", "Pending", "Ready For Payout", "Paid", "Rejected", "Needs More Info", "High Risk", "Has Image", "No Image"].map((f) => (
                 <TouchableOpacity key={f} style={adminFilter === f ? styles.primaryButton : styles.secondaryButton} onPress={() => setAdminFilter(f)}>
                   <Text style={adminFilter === f ? styles.primaryButtonText : styles.secondaryButtonText}>{f}</Text>
                 </TouchableOpacity>
@@ -659,6 +659,9 @@ export default function App() {
                 const matchesFilter =
                   adminFilter === "All" ||
                   (adminFilter === "Pending" && (t.status === "Pending Review" || t.status === "Submitted")) ||
+                  (adminFilter === "High Risk" && Number(t.risk_score || 0) >= 70) ||
+                  (adminFilter === "Has Image" && !!t.image_url) ||
+                  (adminFilter === "No Image" && !t.image_url) ||
                   t.status === adminFilter;
 
                 return matchesSearch && matchesFilter;

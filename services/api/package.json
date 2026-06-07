@@ -13,6 +13,7 @@
     "express": "latest",
     "jsonwebtoken": "latest",
     "nodemailer": "^8.0.10",
+    "pg": "^8.21.0",
     "resend": "^6.12.4"
   }
 }
