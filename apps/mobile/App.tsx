@@ -894,6 +894,34 @@ function TransactionList({
               </View>
 
               <Text style={styles.tapHint}>Tap for details</Text>
+
+              {item.status !== "Approved" && item.status !== "Paid" ? (
+                <TouchableOpacity
+                  style={styles.primaryButton}
+                  onPress={async () => {
+                    try {
+                      const token = await AsyncStorage.getItem("cardharbor_token");
+
+                      await fetch(`${API_URL}/api/admin/transactions/${item.id}/status`, {
+                        method: "PATCH",
+                        headers: {
+                          "Content-Type": "application/json",
+                          Authorization: `Bearer ${token}`,
+                        },
+                        body: JSON.stringify({
+                          status: "Approved"
+                        }),
+                      });
+
+                      onRefresh();
+                    } catch (err) {
+                      console.log(err);
+                    }
+                  }}
+                >
+                  <Text style={styles.primaryButtonText}>Quick Approve</Text>
+                </TouchableOpacity>
+              ) : null}
             </TouchableOpacity>
           );
         })
