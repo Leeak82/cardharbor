@@ -943,6 +943,52 @@ export default function App() {
           </View>
         )}
 
+        
+        {screen === "operatorDashboard" && analytics && ledger && (
+          <View style={styles.card}>
+            <Text style={styles.title}>Operator Dashboard</Text>
+
+            <View style={styles.noticeBox}>
+              <Text style={styles.body}>Pending Review: {analytics.statuses?.pendingReview || 0}</Text>
+              <Text style={styles.body}>Ready For Payout: {analytics.statuses?.readyForPayout || 0}</Text>
+              <Text style={styles.body}>High Risk: {analytics.risk?.highRisk || 0}</Text>
+              <Text style={styles.body}>Paid Transactions: {analytics.statuses?.paid || 0}</Text>
+            </View>
+
+            <View style={styles.noticeBox}>
+              <Text style={styles.sectionTitle}>Money</Text>
+              <Text style={styles.body}>Offers: {money(analytics.money?.totalOffers)}</Text>
+              <Text style={styles.body}>Paid: {money(ledger.totalPaid)}</Text>
+              <Text style={styles.body}>Outstanding: {money(analytics.money?.unpaidOffers)}</Text>
+            </View>
+
+            <View style={styles.noticeBox}>
+              <Text style={styles.sectionTitle}>Rates</Text>
+              <Text style={styles.body}>Approval: {analytics.rates?.approvalRate}%</Text>
+              <Text style={styles.body}>Rejection: {analytics.rates?.rejectionRate}%</Text>
+              <Text style={styles.body}>Payout Completion: {analytics.rates?.payoutCompletionRate}%</Text>
+            </View>
+
+            <TouchableOpacity
+              style={styles.primaryButton}
+              onPress={async () => {
+                await loadAnalytics();
+                await loadLedger();
+              }}
+            >
+              <Text style={styles.primaryButtonText}>Refresh Dashboard</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.secondaryButton}
+              onPress={() => setScreen("adminHome")}
+            >
+              <Text style={styles.secondaryButtonText}>Back</Text>
+            </TouchableOpacity>
+          </View>
+        )}
+
+
         {screen === "support" && (
           <View style={styles.card}>
             <Text style={styles.title}>Support</Text>
