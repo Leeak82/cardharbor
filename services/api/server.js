@@ -491,6 +491,7 @@ app.patch("/api/admin/transactions/:id/status", requireAdmin, async (req, res) =
 // ===== PHASE 6E ADMIN NOTES =====
 app.patch("/api/admin/transactions/:id/notes", requireAdmin, (req, res) => {
   try {
+    const db = loadDb();
     const { admin_note = "", payout_note = "", payout_reference = "" } = req.body || {};
     const tx = db.transactions.find(t => String(t.id) === String(req.params.id));
 
@@ -503,9 +504,9 @@ app.patch("/api/admin/transactions/:id/notes", requireAdmin, (req, res) => {
     tx.payout_reference = String(payout_reference || "");
     tx.notes_updated_at = new Date().toISOString();
 
-    saveDb();
+    saveDb(db);
 
-    res.json({ ok: true, transaction: tx });
+    res.json({ ok: true, transaction: attachUserData(db, [tx])[0] });
   } catch (err) {
     console.error("Save admin notes failed:", err);
     res.status(500).json({ error: "Failed to save admin notes" });

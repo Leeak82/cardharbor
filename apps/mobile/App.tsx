@@ -621,6 +621,40 @@ export default function App() {
               <Text style={styles.label}>Payout Note</Text>
               <TextInput style={styles.input} value={payoutNote} onChangeText={setPayoutNote} placeholder="Payout note visible to user" />
 
+              <TouchableOpacity
+                style={styles.primaryButton}
+                onPress={async () => {
+                  try {
+                    const res = await fetch(`${API_URL}/api/admin/transactions/${selectedTransaction.id}/notes`, {
+                      method: "PATCH",
+                      headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${adminToken}`,
+                      },
+                      body: JSON.stringify({
+                        admin_note: adminNote,
+                        payout_note: payoutNote,
+                        payout_reference: payoutReference,
+                      }),
+                    });
+
+                    const data = await res.json();
+
+                    if (!res.ok) {
+                      alert(data.error || "Failed to save admin fields");
+                      return;
+                    }
+
+                    setSelectedTransaction(data.transaction);
+                    alert("Admin fields saved");
+                  } catch (err) {
+                    alert("Network error saving admin fields");
+                  }
+                }}
+              >
+                <Text style={styles.primaryButtonText}>Save Admin Fields</Text>
+              </TouchableOpacity>
+
               <TouchableOpacity style={styles.primaryButton} onPress={() => updateStatus("Approved")}>
                 <Text style={styles.primaryButtonText}>Approve</Text>
               </TouchableOpacity>
@@ -870,6 +904,7 @@ function TransactionDetail({ item, admin, onBack, onHome }: { item: Transaction;
         </View>
       ) : null}
 
+      {item.admin_note ? <View style={styles.detailRow}><Text style={styles.detailKey}>Admin Note</Text><Text>{item.admin_note}</Text></View> : null}
       {item.payout_reference ? <View style={styles.detailRow}><Text style={styles.detailKey}>Payout Ref</Text><Text>{item.payout_reference}</Text></View> : null}
       {item.payout_note ? <View style={styles.detailRow}><Text style={styles.detailKey}>Payout Note</Text><Text>{item.payout_note}</Text></View> : null}
       {item.paid_at ? <View style={styles.detailRow}><Text style={styles.detailKey}>Paid At</Text><Text>{item.paid_at}</Text></View> : null}
