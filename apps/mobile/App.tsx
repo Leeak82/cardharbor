@@ -614,6 +614,15 @@ export default function App() {
             <View style={styles.card}>
               <Text style={styles.title}>Admin Actions</Text>
 
+              <View style={styles.noticeBox}>
+                <Text style={styles.sectionTitle}>Payout Snapshot</Text>
+                <Text style={styles.body}>Offer: ${selectedTransaction.offer}</Text>
+                <Text style={styles.body}>Saved Amount: {selectedTransaction.payout_amount ? "$" + selectedTransaction.payout_amount : "Not paid yet"}</Text>
+                <Text style={styles.body}>Method: {selectedTransaction.payout_method_used || selectedTransaction.payout_method || "Not selected"}</Text>
+                <Text style={styles.body}>Reference: {selectedTransaction.payout_reference || "None yet"}</Text>
+                <Text style={styles.body}>Paid At: {selectedTransaction.paid_at || "Not paid yet"}</Text>
+              </View>
+
               <Text style={styles.label}>Admin Note</Text>
               <TextInput style={styles.input} value={adminNote} onChangeText={setAdminNote} placeholder="Review reason or internal note" />
 
