@@ -866,10 +866,12 @@ function TransactionList({
           return (
             <TouchableOpacity key={String(item.id)} style={styles.historyItem} onPress={() => onOpen(item)}>
               <Text style={styles.historyTitle}>{item.brand} / {item.detected_brand || "Unknown"}</Text>
-              <Text>Status: {item.status}</Text>
+              <Text style={{ fontWeight: "800" }}>Status: {item.status}</Text>
               <Text>Balance: ${item.balance}</Text>
               <Text>Offer: ${item.offer}</Text>
-              <Text>Status: {item.status}</Text>
+              {item.payout_amount ? <Text>Payout Amount: ${item.payout_amount}</Text> : null}
+              {item.payout_method_used ? <Text>Paid Via: {item.payout_method_used}</Text> : null}
+              {item.payout_reference ? <Text>Ref: {item.payout_reference}</Text> : null}
               <Text>Image: {item.image_url ? "yes" : "none"}</Text>
 
               <View style={{ marginTop: 10, padding: 10, borderRadius: 10, backgroundColor: "#f8fafc", borderWidth: 1, borderColor: riskColor(score) }}>
