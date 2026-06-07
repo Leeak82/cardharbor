@@ -684,6 +684,63 @@ app.get("/api/admin/fraud", requireAdmin, (req, res) => {
 // ===== END PHASE 10C =====
 
 
+
+// ===== PHASE 10E CSV EXPORTS =====
+function csvEscape(value) {
+  const text = String(value ?? "");
+  return '"' + text.replace(/"/g, '""') + '"';
+}
+
+function sendCsv(res, filename, rows, columns) {
+  const header = columns.map(c => csvEscape(c.label)).join(",");
+  const body = rows.map(row =>
+    columns.map(c => csvEscape(row[c.key])).join(",")
+  ).join("\n");
+
+  res.setHeader("Content-Type", "text/csv");
+  res.setHeader("Content-Disposition", `attachment; filename="${filename}"`);
+  res.send(header + "\n" + body);
+}
+
+app.get("/api/admin/export/transactions.csv", requireAdmin, (req, res) => {
+  const db = loadDb();
+  const rows = attachUserData(db, db.transactions || []);
+
+  sendCsv(res, "cardharbor_transactions.csv", rows, [
+    { key: "id", label: "Transaction ID" },
+    { key: "user_email", label: "User Email" },
+    { key: "brand", label: "Brand" },
+    { key: "balance", label: "Balance" },
+    { key: "offer", label: "Offer" },
+    { key: "status", label: "Status" },
+    { key: "risk_score", label: "Risk Score" },
+    { key: "payout_method", label: "Requested Payout Method" },
+    { key: "payout_method_used", label: "Payout Method Used" },
+    { key: "payout_amount", label: "Payout Amount" },
+    { key: "payout_reference", label: "Payout Reference" },
+    { key: "created_at", label: "Created At" },
+    { key: "paid_at", label: "Paid At" }
+  ]);
+});
+
+app.get("/api/admin/export/ledger.csv", requireAdmin, (req, res) => {
+  const db = loadDb();
+  const rows = db.payoutLedger || [];
+
+  sendCsv(res, "cardharbor_payout_ledger.csv", rows, [
+    { key: "ledger_id", label: "Ledger ID" },
+    { key: "transaction_id", label: "Transaction ID" },
+    { key: "user_email", label: "User Email" },
+    { key: "amount", label: "Amount" },
+    { key: "method", label: "Method" },
+    { key: "reference", label: "Reference" },
+    { key: "created_by", label: "Created By" },
+    { key: "created_at", label: "Created At" }
+  ]);
+});
+// ===== END PHASE 10E =====
+
+
 app.listen(PORT, "0.0.0.0", () => {
   console.log(`CardHarbor API running on port ${PORT}`);
 });
