@@ -1,0 +1,16 @@
+{
+  "name": "cardharbor-api",
+  "version": "1.0.0",
+  "description": "CardHarbor backend API",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "bcryptjs": "latest",
+    "cors": "latest",
+    "dotenv": "latest",
+    "express": "latest",
+    "jsonwebtoken": "latest"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "name": "clean-cash-card-exchange-starter",
+  "private": true,
+  "scripts": {
+    "dev": "echo \"Run apps individually: services/api, apps/admin-dashboard, apps/mobile\"",
+    "lint": "echo \"Add eslint config per app\""
+  },
+  "workspaces": [
+    "apps/mobile",
+    "apps/admin-dashboard",
+    "services/api"
+  ]
+}

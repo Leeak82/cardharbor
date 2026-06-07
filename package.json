@@ -1,0 +1,10 @@
+{
+  "name": "cardharbor",
+  "version": "1.0.0",
+  "private": true,
+  "description": "CardHarbor monorepo",
+  "scripts": {
+    "api": "cd services/api && node server.js",
+    "mobile": "cd apps/mobile && npx expo start"
+  }
+}

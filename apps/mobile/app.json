@@ -1,0 +1,28 @@
+{
+  "expo": {
+    "name": "CardHarbor",
+    "slug": "cardharbor",
+    "version": "0.2.0",
+    "orientation": "portrait",
+    "scheme": "cardharbor",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.cardharbor.mobile"
+    },
+    "android": {
+      "package": "com.cardharbor.mobile",
+      "versionCode": 2,
+      "permissions": [
+        "CAMERA"
+      ]
+    },
+    "extra": {
+      "apiUrl": "http://localhost:8080"
+    },
+    "plugins": [
+      "expo-asset"
+    ]
+  }
+}
