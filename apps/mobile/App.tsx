@@ -815,6 +815,16 @@ export default function App() {
             <Text style={styles.body}>Medium Risk: {analytics.risk?.mediumRisk}</Text>
             <Text style={styles.body}>High Risk: {analytics.risk?.highRisk}</Text>
 
+            <Text style={styles.sectionTitle}>Brand Totals</Text>
+            {analytics.brandTotals ? Object.entries(analytics.brandTotals).map(([brand, data]: any) => (
+              <View key={brand} style={styles.noticeBox}>
+                <Text style={styles.body}>{brand}</Text>
+                <Text style={styles.body}>Count: {data.count}</Text>
+                <Text style={styles.body}>Balance: ${data.balance}</Text>
+                <Text style={styles.body}>Offers: ${data.offer}</Text>
+              </View>
+            )) : null}
+
             <TouchableOpacity style={styles.primaryButton} onPress={loadAnalytics}>
               <Text style={styles.primaryButtonText}>Refresh Analytics</Text>
             </TouchableOpacity>
