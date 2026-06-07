@@ -19,6 +19,15 @@ const DB_FILE = "./db.json";
 const UPLOAD_DIR = "./uploads";
 
 app.use(cors());
+app.get("/api/health", (req, res) => {
+  res.json({
+    ok: true,
+    service: "CardHarbor API",
+    phase: "5D",
+    time: new Date().toISOString()
+  });
+});
+
 app.use(express.json({ limit: "5mb" }));
 app.use("/uploads", express.static(UPLOAD_DIR));
 
