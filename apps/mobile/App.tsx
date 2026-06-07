@@ -800,10 +800,10 @@ export default function App() {
             <Text style={styles.body}>Rejected: {analytics.statuses?.rejected}</Text>
 
             <Text style={styles.sectionTitle}>Money</Text>
-            <Text style={styles.body}>Total Balance: ${analytics.money?.totalBalance}</Text>
-            <Text style={styles.body}>Total Offers: ${analytics.money?.totalOffers}</Text>
-            <Text style={styles.body}>Total Paid: ${analytics.money?.totalPaid}</Text>
-            <Text style={styles.body}>Unpaid Offers: ${analytics.money?.unpaidOffers}</Text>
+            <Text style={styles.body}>Total Balance: {money(analytics.money?.totalBalance)}</Text>
+            <Text style={styles.body}>Total Offers: {money(analytics.money?.totalOffers)}</Text>
+            <Text style={styles.body}>Total Paid: {money(analytics.money?.totalPaid)}</Text>
+            <Text style={styles.body}>Unpaid Offers: {money(analytics.money?.unpaidOffers)}</Text>
 
             <Text style={styles.sectionTitle}>Rates</Text>
             <Text style={styles.body}>Approval Rate: {analytics.rates?.approvalRate}%</Text>
@@ -820,8 +820,8 @@ export default function App() {
               <View key={brand} style={styles.noticeBox}>
                 <Text style={styles.body}>{brand}</Text>
                 <Text style={styles.body}>Count: {data.count}</Text>
-                <Text style={styles.body}>Balance: ${data.balance}</Text>
-                <Text style={styles.body}>Offers: ${data.offer}</Text>
+                <Text style={styles.body}>Balance: {money(data.balance)}</Text>
+                <Text style={styles.body}>Offers: {money(data.offer)}</Text>
               </View>
             )) : null}
 
@@ -848,6 +848,11 @@ export default function App() {
       </ScrollView>
     </SafeAreaView>
   );
+}
+
+function money(v: any) {
+  const n = Number(v || 0);
+  return "$" + n.toFixed(2);
 }
 
 function Stat({ label, value }: { label: string; value: any }) {
