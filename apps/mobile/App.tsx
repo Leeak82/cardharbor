@@ -112,6 +112,7 @@ export default function App() {
   const [analytics, setAnalytics] = useState<any>(null);
   const [ledger, setLedger] = useState<any>(null);
   const [fraud, setFraud] = useState<any>(null);
+  const [csvPreview, setCsvPreview] = useState("");
 
   useEffect(() => {
     boot();
@@ -357,6 +358,27 @@ export default function App() {
       setTransactions(data.transactions || []);
     } catch (err: any) {
       Alert.alert("CardHarbor", err.message);
+    }
+  }
+
+  async function loadCsvPreview(path: string) {
+    try {
+      const activeToken = await AsyncStorage.getItem("cardharbor_token");
+      const res = await fetch(`${API_URL}${path}`, {
+        headers: { Authorization: `Bearer ${activeToken}` },
+      });
+
+      const text = await res.text();
+
+      if (!res.ok) {
+        Alert.alert("CSV Export", text || "Export failed");
+        return;
+      }
+
+      setCsvPreview(text.slice(0, 5000));
+      setScreen("csvPreview");
+    } catch (err: any) {
+      Alert.alert("CSV Export", err.message);
     }
   }
 
@@ -1047,6 +1069,17 @@ export default function App() {
             <TouchableOpacity style={styles.primaryButton} onPress={loadFraud}>
               <Text style={styles.primaryButtonText}>Refresh Fraud Dashboard</Text>
             </TouchableOpacity>
+
+            <TouchableOpacity style={styles.secondaryButton} onPress={() => setScreen("adminHome")}>
+              <Text style={styles.secondaryButtonText}>Back</Text>
+            </TouchableOpacity>
+          </View>
+        )}
+
+        {screen === "csvPreview" && (
+          <View style={styles.card}>
+            <Text style={styles.title}>CSV Preview</Text>
+            <Text selectable style={styles.ocrBox}>{csvPreview || "No CSV loaded."}</Text>
 
             <TouchableOpacity style={styles.secondaryButton} onPress={() => setScreen("adminHome")}>
               <Text style={styles.secondaryButtonText}>Back</Text>
