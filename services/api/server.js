@@ -57,13 +57,14 @@ const BRANDS = [
 
 function loadDb() {
   if (!fs.existsSync(DB_FILE)) {
-    fs.writeFileSync(DB_FILE, JSON.stringify({ users: [], transactions: [], payoutProfiles: [] }, null, 2));
+    fs.writeFileSync(DB_FILE, JSON.stringify({ users: [], transactions: [], payoutProfiles: [], payoutLedger: [] }, null, 2));
   }
 
   const db = JSON.parse(fs.readFileSync(DB_FILE, "utf8"));
   if (!db.users) db.users = [];
   if (!db.transactions) db.transactions = [];
   if (!db.payoutProfiles) db.payoutProfiles = [];
+  if (!db.payoutLedger) db.payoutLedger = [];
   return db;
 }
 
@@ -470,6 +471,21 @@ app.patch("/api/admin/transactions/:id/status", requireAdmin, async (req, res) =
     if (!transaction.payout_amount) transaction.payout_amount = transaction.offer;
     if (!transaction.payout_method_used) transaction.payout_method_used = transaction.payout_method || "Manual";
     if (!transaction.payout_note) transaction.payout_note = "Manual payout marked complete.";
+
+    const existingLedger = db.payoutLedger.find(e => String(e.transaction_id) === String(transaction.id));
+    if (!existingLedger) {
+      db.payoutLedger.push({
+        ledger_id: Date.now(),
+        transaction_id: transaction.id,
+        user_id: transaction.user_id,
+        user_email: user?.email || "",
+        amount: Number(transaction.payout_amount || transaction.offer || 0),
+        method: transaction.payout_method_used || transaction.payout_method || "Manual",
+        reference: transaction.payout_reference || "",
+        created_by: req.user.email,
+        created_at: transaction.paid_at
+      });
+    }
   }
 
   saveDb(db);
@@ -597,6 +613,32 @@ app.get("/api/admin/analytics", requireAdmin, (req, res) => {
   });
 });
 // ===== END PHASE 7A =====
+
+
+
+// ===== PHASE 8A PAYOUT LEDGER =====
+app.get("/api/admin/ledger", requireAdmin, (req, res) => {
+  const db = loadDb();
+  const entries = (db.payoutLedger || []).sort((a, b) => String(b.created_at || "").localeCompare(String(a.created_at || "")));
+
+  const totalPaid = entries.reduce((sum, e) => sum + Number(e.amount || 0), 0);
+  const byMethod = {};
+
+  for (const e of entries) {
+    const method = e.method || "Unknown";
+    if (!byMethod[method]) byMethod[method] = { count: 0, total: 0 };
+    byMethod[method].count += 1;
+    byMethod[method].total += Number(e.amount || 0);
+  }
+
+  res.json({
+    entries,
+    totalPaid,
+    count: entries.length,
+    byMethod
+  });
+});
+// ===== END PHASE 8A =====
 
 
 app.listen(PORT, "0.0.0.0", () => {
