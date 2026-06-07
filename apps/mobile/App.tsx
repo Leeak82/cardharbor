@@ -109,6 +109,7 @@ export default function App() {
   const [payoutMethodUsed, setPayoutMethodUsed] = useState("");
   const [adminFilter, setAdminFilter] = useState("All");
   const [adminSearch, setAdminSearch] = useState("");
+  const [analytics, setAnalytics] = useState<any>(null);
 
   useEffect(() => {
     boot();
@@ -354,6 +355,15 @@ export default function App() {
       setTransactions(data.transactions || []);
     } catch (err: any) {
       Alert.alert("CardHarbor", err.message);
+    }
+  }
+
+  async function loadAnalytics() {
+    try {
+      const data = await request("/api/admin/analytics");
+      setAnalytics(data);
+    } catch (err: any) {
+      Alert.alert("Analytics", err.message);
     }
   }
 
@@ -773,6 +783,45 @@ export default function App() {
                 <Text style={styles.dangerButtonText}>Reject</Text>
               </TouchableOpacity>
             </View>
+          </View>
+        )}
+
+        {screen === "adminAnalytics" && analytics && (
+          <View style={styles.card}>
+            <Text style={styles.title}>Analytics Dashboard</Text>
+
+            <Text style={styles.sectionTitle}>Volume</Text>
+            <Text style={styles.body}>Total Transactions: {analytics.totalTransactions}</Text>
+            <Text style={styles.body}>Submitted: {analytics.statuses?.submitted}</Text>
+            <Text style={styles.body}>Pending Review: {analytics.statuses?.pendingReview}</Text>
+            <Text style={styles.body}>Approved: {analytics.statuses?.approved}</Text>
+            <Text style={styles.body}>Ready For Payout: {analytics.statuses?.readyForPayout}</Text>
+            <Text style={styles.body}>Paid: {analytics.statuses?.paid}</Text>
+            <Text style={styles.body}>Rejected: {analytics.statuses?.rejected}</Text>
+
+            <Text style={styles.sectionTitle}>Money</Text>
+            <Text style={styles.body}>Total Balance: ${analytics.money?.totalBalance}</Text>
+            <Text style={styles.body}>Total Offers: ${analytics.money?.totalOffers}</Text>
+            <Text style={styles.body}>Total Paid: ${analytics.money?.totalPaid}</Text>
+            <Text style={styles.body}>Unpaid Offers: ${analytics.money?.unpaidOffers}</Text>
+
+            <Text style={styles.sectionTitle}>Rates</Text>
+            <Text style={styles.body}>Approval Rate: {analytics.rates?.approvalRate}%</Text>
+            <Text style={styles.body}>Rejection Rate: {analytics.rates?.rejectionRate}%</Text>
+            <Text style={styles.body}>Payout Completion: {analytics.rates?.payoutCompletionRate}%</Text>
+
+            <Text style={styles.sectionTitle}>Risk</Text>
+            <Text style={styles.body}>Low Risk: {analytics.risk?.lowRisk}</Text>
+            <Text style={styles.body}>Medium Risk: {analytics.risk?.mediumRisk}</Text>
+            <Text style={styles.body}>High Risk: {analytics.risk?.highRisk}</Text>
+
+            <TouchableOpacity style={styles.primaryButton} onPress={loadAnalytics}>
+              <Text style={styles.primaryButtonText}>Refresh Analytics</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.secondaryButton} onPress={() => setScreen("adminHome")}>
+              <Text style={styles.secondaryButtonText}>Back</Text>
+            </TouchableOpacity>
           </View>
         )}
 
