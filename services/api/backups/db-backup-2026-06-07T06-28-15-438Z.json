@@ -1,0 +1,173 @@
+{
+  "users": [
+    {
+      "id": 1780697934500,
+      "email": "test@cardharbor.app",
+      "password_hash": "$2b$10$sK1FOaxBzQSoRTny7O8xCuYI1zUWtQqGGH8Y.sGhPZj2dB31ENdfK",
+      "created_at": "2026-06-05T22:18:54.701Z"
+    },
+    {
+      "id": 1780707267909,
+      "email": "best@cardharbor.app",
+      "password_hash": "$2b$10$i.wKoncBQrVJQE0bgpqk0eqAisZ/t1t/1FikcHLuLwwMLZKemjuYu",
+      "role": "user",
+      "created_at": "2026-06-06T00:54:28.066Z"
+    }
+  ],
+  "transactions": [
+    {
+      "id": 1780698058069,
+      "user_id": 1780697934500,
+      "brand": "Amazon",
+      "balance": 100,
+      "offer": 72,
+      "payout_method": "Cash App",
+      "status": "Ready For Payout",
+      "created_at": "2026-06-05T22:20:58.069Z",
+      "admin_note": "",
+      "reviewed_by": "admin@cardharbor.app",
+      "reviewed_at": "2026-06-06T00:52:00.195Z"
+    },
+    {
+      "id": 1780700258496,
+      "user_id": 1780697934500,
+      "brand": "Amazon",
+      "balance": 555,
+      "offer": 399.6,
+      "payout_method": "Cash App",
+      "status": "Submitted",
+      "created_at": "2026-06-05T22:57:38.497Z"
+    },
+    {
+      "id": 1780700898922,
+      "user_id": 1780697934500,
+      "brand": "Amazon",
+      "balance": 222,
+      "rate": 0.78,
+      "offer": 173.16,
+      "payout_method": "Cash App",
+      "status": "Approved",
+      "created_at": "2026-06-05T23:08:18.923Z",
+      "admin_note": "",
+      "reviewed_by": "admin@cardharbor.app",
+      "reviewed_at": "2026-06-05T23:51:44.948Z"
+    },
+    {
+      "id": 1780701782327,
+      "user_id": 1780697934500,
+      "brand": "Amazon",
+      "balance": 2580,
+      "rate": 0.78,
+      "offer": 2012.4,
+      "payout_method": "Cash App",
+      "status": "Submitted",
+      "created_at": "2026-06-05T23:23:02.327Z"
+    },
+    {
+      "id": 1780701953007,
+      "user_id": 1780697934500,
+      "brand": "Amazon",
+      "balance": 66,
+      "rate": 0.78,
+      "offer": 51.48,
+      "payout_method": "Cash App",
+      "status": "Paid",
+      "created_at": "2026-06-05T23:25:53.007Z",
+      "admin_note": "",
+      "reviewed_by": "admin@cardharbor.app",
+      "reviewed_at": "2026-06-06T00:51:23.652Z",
+      "paid_at": "2026-06-06T00:51:23.652Z"
+    },
+    {
+      "id": 1780707202624,
+      "user_id": 1780697934500,
+      "brand": "Amazon",
+      "detected_brand": "Amazon",
+      "balance": 500,
+      "detected_balance": null,
+      "rate": 0.78,
+      "offer": 390,
+      "payout_method": "Cash App",
+      "image_url": null,
+      "ocr_text": "",
+      "ocr_available": false,
+      "ocr_error": "No image uploaded",
+      "possible_codes": [],
+      "admin_note": "",
+      "reviewed_by": "admin@cardharbor.app",
+      "reviewed_at": "2026-06-06T01:11:13.213Z",
+      "paid_at": "2026-06-06T01:11:13.213Z",
+      "status": "Paid",
+      "created_at": "2026-06-06T00:53:22.625Z"
+    },
+    {
+      "id": 1780707346770,
+      "user_id": 1780707267909,
+      "brand": "Visa",
+      "detected_brand": "Visa",
+      "balance": 69,
+      "detected_balance": 1,
+      "rate": 0.82,
+      "offer": 56.58,
+      "payout_method": "Cash App",
+      "image_url": "/uploads/card_1780707267909_1780707346770_1780707346878.jpg",
+      "ocr_text": "ANTHONY LEE\n5143 7737 4426 9175\nexp 01/30 cvc 016\n\n’) This card is issued by The Bancorp Bank, N.A,\nand its use is subject to the cardholder agreement.\n\nCustomer Service: (844) 896-4937 Outside US and Canada: (402) 935-2311 www. puypql com\n\n- & iy el el U",
+      "ocr_available": true,
+      "ocr_error": null,
+      "possible_codes": [
+        "5143 7737 4426",
+        "This card is",
+        "Bancorp Bank",
+        "cardholder agreement",
+        "Customer Service",
+        "4937 Outside US"
+      ],
+      "admin_note": "69 ",
+      "reviewed_by": "admin@cardharbor.app",
+      "reviewed_at": "2026-06-07T06:20:32.276Z",
+      "paid_at": "2026-06-07T06:20:26.460Z",
+      "status": "Rejected",
+      "created_at": "2026-06-06T00:55:46.771Z",
+      "payout_note": "Manual payout marked complete.",
+      "payout_reference": ""
+    },
+    {
+      "id": 1780813154249,
+      "user_id": 1780697934500,
+      "brand": "Amazon",
+      "detected_brand": "Amazon",
+      "balance": 358,
+      "detected_balance": null,
+      "rate": 0.78,
+      "offer": 279.24,
+      "payout_method": "Cash App",
+      "image_url": null,
+      "ocr_text": "",
+      "ocr_available": false,
+      "ocr_error": "No image uploaded",
+      "possible_codes": [],
+      "admin_note": "",
+      "payout_note": "",
+      "payout_reference": "",
+      "reviewed_by": null,
+      "reviewed_at": null,
+      "paid_at": null,
+      "status": "Submitted",
+      "created_at": "2026-06-07T06:19:14.250Z"
+    }
+  ],
+  "payoutProfiles": [
+    {
+      "id": 1780708220060,
+      "user_id": 1780697934500,
+      "created_at": "2026-06-06T01:10:20.060Z",
+      "preferred_method": "Cash App",
+      "cashapp_tag": "",
+      "venmo_handle": "",
+      "bank_name": "",
+      "account_last4": "",
+      "routing_last4": "",
+      "updated_at": "2026-06-06T01:10:20.060Z"
+    }
+  ]
+}

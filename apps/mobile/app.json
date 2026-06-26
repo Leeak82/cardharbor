@@ -19,7 +19,10 @@
       ]
     },
     "extra": {
-      "apiUrl": "http://localhost:8080"
+      "apiUrl": "http://localhost:8080",
+      "eas": {
+        "projectId": "8bb913b6-aa7c-49a1-bb3c-b09ed0f56695"
+      }
     },
     "plugins": [
       "expo-asset"
