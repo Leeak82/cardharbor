@@ -5,6 +5,7 @@
   "description": "CardHarbor monorepo",
   "scripts": {
     "api": "cd services/api && node server.js",
-    "mobile": "cd apps/mobile && npx expo start"
+    "mobile": "cd apps/mobile && npx expo start",
+    "fallback": "cd services/api && node fallback-server.js"
   }
 }
